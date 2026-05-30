@@ -1,0 +1,62 @@
+services:
+  - type: web
+    name: hipercom-api
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install && npx prisma generate
+    startCommand: npx prisma db push --accept-data-loss && node src/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3001"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hipercom-db
+          property: connectionString
+      - key: JWT_SECRET
+        value: hipercom_production_secret_key_change_this_2026
+      - key: MASTER_USERNAME
+        value: hipercom
+      - key: MASTER_PASSWORD
+        value: Hipercom123#
+      - key: HITPAY_API_URL
+        value: https://api.hit-pay.com
+      - key: HITPAY_API_KEY
+        sync: false
+      - key: HITPAY_SALT
+        sync: false
+      - key: HITPAY_DEFAULT_LINK
+        value: https://securecheckout.hit-pay.com/payment-request/@hipercom-technology-sdn-bhd
+      - key: CLIENT_URL
+        value: https://client-bnm3di8o2-ctys-projects-d2c7e615.vercel.app
+      - key: SERVER_URL
+        value: https://hipercom-api.onrender.com
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: EMAIL_HOST
+        value: mail.hipercom.com.my
+      - key: EMAIL_PORT
+        value: "465"
+      - key: EMAIL_SECURE
+        value: "true"
+      - key: EMAIL_USER
+        value: hipercommailserver@hipercom.com.my
+      - key: EMAIL_PASS
+        sync: false
+      - key: EMAIL_FROM
+        value: HiperCom <hipercommailserver@hipercom.com.my>
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: NVIDIA_API_KEY
+        sync: false
+
+databases:
+  - name: hipercom-db
+    region: singapore
+    plan: free
+    postgresMajorVersion: 15
