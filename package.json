@@ -1,0 +1,36 @@
+{
+  "name": "ecommerce-minimax",
+  "version": "1.0.0",
+  "description": "Full-stack e-commerce solution with AI, HitPay, referral system",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "db:migrate": "cd server && npx prisma migrate dev",
+    "db:seed": "cd server && npx prisma db seed",
+    "db:push": "cd server && npx prisma db push",
+    "db:reset": "cd server && npx prisma migrate reset --force",
+    "cli": "cd server && node src/cli/index.js",
+    "dev:manager": "cd server && node src/dev-manager.js",
+    "test:api": "cd server && node src/test-api.js",
+    "generate:data": "cd server && node prisma/generate-data.js",
+    "health": "cd server && node src/cli.js health check",
+    "status": "cd server && node src/dev-manager.js status",
+    "start": "cd server && node src/dev-manager.js start",
+    "stop": "cd server && node src/dev-manager.js stop",
+    "restart": "cd server && node src/dev-manager.js restart",
+    "lint:server": "cd server && npx eslint src/**/*.js",
+    "lint:client": "cd client && npx eslint src/**/*.{js,jsx}",
+    "format:server": "cd server && npx prettier --write \"src/**/*.js\"",
+    "format:client": "cd client && npx prettier --write \"src/**/*.{js,jsx}\"",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
