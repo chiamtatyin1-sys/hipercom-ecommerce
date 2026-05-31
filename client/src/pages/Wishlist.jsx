@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Heart, Trash2, ShoppingCart, Package } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 export default function Wishlist() {
   const { user } = useAuth();
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,12 +36,13 @@ export default function Wishlist() {
     }
   };
 
-  const addToCart = async (productId) => {
-    try {
-      await api.post('/cart/add', { productId, quantity: 1 });
+  const handleAddToCart = async (productId) => {
+    if (!user) { toast.error('Please login first'); setTimeout(() => navigate('/login'), 1500); return; }
+    const result = await addToCart(productId, null, 1);
+    if (result.success) {
       toast.success('Added to cart');
-    } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to add to cart');
+    } else {
+      toast.error(result.error);
     }
   };
 
@@ -107,12 +111,15 @@ export default function Wishlist() {
                   <h3 className="font-medium text-sm mb-1 line-clamp-2 hover:text-primary-600">{product.name}</h3>
                 </Link>
                 {product.brand && (
-                  <p className="text-xs text-gray-500 mb-2">{product.brand.name}</p>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    {product.brand.logo && <img src={product.brand.logo} alt={product.brand.name} className="h-3.5 object-contain" onError={(e) => { e.target.style.display = 'none'; }} />}
+                    <p className="text-xs text-gray-500">{product.brand.name}</p>
+                  </div>
                 )}
                 <div className="flex items-center justify-between mt-3">
                   <span className="text-lg font-bold text-primary-600">RM {product.price.toFixed(2)}</span>
                   <button
-                    onClick={() => addToCart(product.id)}
+                    onClick={() => handleAddToCart(product.id)}
                     className="p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                   >
                     <ShoppingCart className="h-4 w-4" />

@@ -82,6 +82,11 @@ export default function ProductDetail() {
   };
 
   const handleAddToCart = async () => {
+    if (!user) {
+      toast.error('Please login to add items to cart');
+      setTimeout(() => navigate('/login'), 1500);
+      return;
+    }
     const result = await addToCart(product.id, selectedVariant?.id || null, quantity);
     if (result.success) {
       toast.success('Added to cart!');
@@ -176,6 +181,14 @@ export default function ProductDetail() {
 
         <div>
           <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
+          {product.brand && (
+            <div className="flex items-center gap-2 mb-2">
+              {product.brand.logo && (
+                <img src={product.brand.logo} alt={product.brand.name} className="h-5 object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
+              )}
+              <span className="text-sm text-gray-500">{product.brand.name}</span>
+            </div>
+          )}
           {product.sku && (
             <p className="text-sm text-gray-400 mb-2">SKU: {product.sku}</p>
           )}

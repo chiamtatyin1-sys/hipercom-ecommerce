@@ -87,8 +87,13 @@ export default function Checkout() {
     setLoading(true);
 
     try {
-      // Refresh cart to ensure we have latest data
-      await refreshCart();
+      const token = localStorage.getItem('token');
+      if (!token || !user) {
+        toast.error('Please login to continue');
+        navigate('/login');
+        setLoading(false);
+        return;
+      }
 
       // Validate
       if (formData.deliveryType === 'shipping' && !formData.addressId) {
@@ -136,7 +141,13 @@ export default function Checkout() {
         setLoading(false);
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Checkout failed');
+      const msg = error.response?.data?.error;
+      if (msg === 'No token provided' || msg === 'Invalid token' || msg === 'Token expired') {
+        toast.error('Session expired. Please login again.');
+        navigate('/login');
+      } else {
+        toast.error(msg || 'Checkout failed');
+      }
       setLoading(false);
     }
   };

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" fill="none">
+  <defs>
+    <linearGradient id="logoGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+  </defs>
+  <!-- Icon: circuit-chip style H -->
+  <rect x="2" y="4" width="36" height="40" rx="8" fill="url(#logoGrad)"/>
+  <!-- H letter -->
+  <rect x="10" y="14" width="4" height="20" rx="1" fill="white"/>
+  <rect x="22" y="14" width="4" height="20" rx="1" fill="white"/>
+  <rect x="14" y="22" width="8" height="4" rx="1" fill="white"/>
+  <!-- Circuit dots -->
+  <circle cx="4" cy="10" r="2" fill="#38bdf8"/>
+  <circle cx="36" cy="10" r="2" fill="#38bdf8"/>
+  <circle cx="4" cy="38" r="2" fill="#38bdf8"/>
+  <circle cx="36" cy="38" r="2" fill="#38bdf8"/>
+  <!-- Text -->
+  <text x="48" y="32" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="700" fill="#0369a1">Hiper</text>
+  <text x="120" y="32" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="700" fill="#0ea5e9">Com</text>
+</svg>

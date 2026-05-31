@@ -14,12 +14,23 @@ if (getToken()) {
   api.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`;
 }
 
+let isRefreshing = false;
+
 api.interceptors.response.use(
   response => response,
   error => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.dispatchEvent(new Event('auth:logout'));
+      const token = localStorage.getItem('token');
+      if (!token) {
+        return Promise.reject(error);
+      }
+      if (!isRefreshing) {
+        isRefreshing = true;
+        localStorage.removeItem('token');
+        delete api.defaults.headers.common['Authorization'];
+        window.dispatchEvent(new Event('auth:logout'));
+        setTimeout(() => { isRefreshing = false; }, 1000);
+      }
     }
     return Promise.reject(error);
   }

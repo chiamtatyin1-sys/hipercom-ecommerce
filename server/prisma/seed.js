@@ -49,16 +49,16 @@ async function seed() {
     // 3. Create Brands
     console.log('Creating brands...');
     const brands = [
-      { name: 'Samsung', slug: 'samsung', logo: 'S' },
-      { name: 'Apple', slug: 'apple', logo: 'A' },
-      { name: 'Nike', slug: 'nike', logo: 'N' },
-      { name: 'Adidas', slug: 'adidas', logo: 'A' },
-      { name: 'Sony', slug: 'sony', logo: 'S' },
-      { name: 'LG', slug: 'lg', logo: 'L' },
-      { name: 'Xiaomi', slug: 'xiaomi', logo: 'X' },
-      { name: 'IKEA', slug: 'ikea', logo: 'I' },
-      { name: 'Unilever', slug: 'unilever', logo: 'U' },
-      { name: 'Nestle', slug: 'nestle', logo: 'N' },
+      { name: 'Samsung', slug: 'samsung', logo: '/brands/samsung.svg' },
+      { name: 'Apple', slug: 'apple', logo: '/brands/apple.svg' },
+      { name: 'Nike', slug: 'nike', logo: '/brands/nike.svg' },
+      { name: 'Adidas', slug: 'adidas', logo: '/brands/adidas.svg' },
+      { name: 'Sony', slug: 'sony', logo: '/brands/sony.svg' },
+      { name: 'LG', slug: 'lg', logo: '/brands/lg.svg' },
+      { name: 'Xiaomi', slug: 'xiaomi', logo: '/brands/xiaomi.svg' },
+      { name: 'IKEA', slug: 'ikea', logo: '/brands/ikea.svg' },
+      { name: 'Unilever', slug: 'unilever', logo: '/brands/unilever.svg' },
+      { name: 'Nestle', slug: 'nestle', logo: '/brands/nestle.svg' },
     ];
 
     const createdBrands = [];

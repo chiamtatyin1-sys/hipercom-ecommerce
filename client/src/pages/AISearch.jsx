@@ -235,7 +235,10 @@ export default function AISearch() {
                 <div className="p-4">
                   <h3 className="font-medium text-sm line-clamp-2 mb-2">{product.name}</h3>
                   {product.brand && (
-                    <p className="text-xs text-gray-500 mb-1">{product.brand.name}</p>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      {product.brand.logo && <img src={product.brand.logo} alt={product.brand.name} className="h-3.5 object-contain" onError={(e) => { e.target.style.display = 'none'; }} />}
+                      <p className="text-xs text-gray-500">{product.brand.name}</p>
+                    </div>
                   )}
                   {product.category && (
                     <span className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded mb-2">

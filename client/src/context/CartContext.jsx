@@ -24,11 +24,11 @@ export function CartProvider({ children }) {
       setItems(res.data.items);
       setSubtotal(res.data.subtotal);
     } catch (error) {
-      console.error('Failed to fetch cart:', error);
       if (error.response?.status === 401) {
         setItems([]);
         setSubtotal(0);
       }
+      throw error;
     }
   };
 

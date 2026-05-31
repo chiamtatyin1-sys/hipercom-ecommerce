@@ -99,7 +99,12 @@ export default function Home() {
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-lg mb-1 group-hover:text-primary-600 truncate">{product.name}</h3>
-                <p className="text-gray-500 text-sm mb-2">{product.brand?.name}</p>
+                <div className="flex items-center gap-2 mb-2">
+                  {product.brand?.logo ? (
+                    <img src={product.brand.logo} alt={product.brand.name} className="h-4 object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
+                  ) : null}
+                  <span className="text-gray-500 text-sm">{product.brand?.name}</span>
+                </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xl font-bold text-primary-600">RM {product.price.toFixed(2)}</span>
                   <div className="flex items-center text-yellow-500">

@@ -67,6 +67,10 @@ export default function Login() {
 
   return (
     <div className="max-w-md mx-auto mt-20">
+      <div className="text-center mb-8">
+        <img src="/logo.svg" alt="HiperCom" className="h-12 mx-auto mb-3" />
+        <p className="text-gray-500 text-sm">Your trusted online store for laptops & digital products</p>
+      </div>
       <div className="card p-8">
         <h1 className="text-2xl font-bold text-center mb-6">Welcome Back</h1>
 

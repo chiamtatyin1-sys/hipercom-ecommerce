@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Star, Heart } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 const parseImages = (imgData) => {
@@ -14,6 +15,8 @@ const parseImages = (imgData) => {
 export default function Category() {
   const { slug } = useParams();
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [category, setCategory] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +42,7 @@ export default function Category() {
   };
 
   const handleAddToCart = async (product) => {
+    if (!user) { toast.error('Please login first'); setTimeout(() => navigate('/login'), 1500); return; }
     const result = await addToCart(product.id, null, 1);
     if (result.success) {
       toast.success('Added to cart!');
@@ -82,7 +86,12 @@ export default function Category() {
                 <Link to={`/products/${product.slug}`}>
                   <h3 className="font-medium text-sm mb-1 line-clamp-2 hover:text-primary-600">{product.name}</h3>
                 </Link>
-                {product.brand && <p className="text-xs text-gray-500 mb-1">{product.brand.name}</p>}
+                {product.brand && (
+                  <div className="flex items-center gap-1.5 mb-1">
+                    {product.brand.logo && <img src={product.brand.logo} alt={product.brand.name} className="h-3.5 object-contain" onError={(e) => { e.target.style.display = 'none'; }} />}
+                    <p className="text-xs text-gray-500">{product.brand.name}</p>
+                  </div>
+                )}
                 <div className="flex items-center gap-1 mb-2">
                   <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
                   <span className="text-xs text-gray-500">{product.averageRating?.toFixed(1) || '4.5'}</span>

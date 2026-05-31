@@ -154,7 +154,7 @@ router.get('/search/advanced', async (req, res) => {
       take: 50,
       orderBy,
       include: {
-        brand: { select: { id: true, name: true } },
+        brand: { select: { id: true, name: true, logo: true } },
         category: { select: { id: true, name: true } },
         variants: { where: { isActive: true } },
       },
