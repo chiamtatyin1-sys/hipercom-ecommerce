@@ -56,7 +56,7 @@ export default function Register() {
           <div>
             <label className="block text-sm font-medium mb-2">Username</label>
             <div className="relative">
-              <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <User className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
               <input
                 type="text"
                 value={formData.username}
@@ -71,7 +71,7 @@ export default function Register() {
           <div>
             <label className="block text-sm font-medium mb-2">Email</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
               <input
                 type="email"
                 value={formData.email}
@@ -86,7 +86,7 @@ export default function Register() {
           <div>
             <label className="block text-sm font-medium mb-2">Phone (Optional)</label>
             <div className="relative">
-              <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
               <input
                 type="tel"
                 value={formData.phone}
@@ -100,7 +100,7 @@ export default function Register() {
           <div>
             <label className="block text-sm font-medium mb-2">Password</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}

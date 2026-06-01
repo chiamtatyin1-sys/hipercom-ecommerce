@@ -58,7 +58,12 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:5178',
+    'https://client-bnm3di8o2-ctys-projects-d2c7e615.vercel.app',
+    process.env.CLIENT_URL,
+  ].filter(Boolean),
   credentials: true,
 }));
 
