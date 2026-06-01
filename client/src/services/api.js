@@ -77,12 +77,18 @@ export const categoriesApi = {
   getAll: () => api.get('/categories'),
   getTree: () => api.get('/categories/tree'),
   getById: (id) => api.get(`/categories/${id}`),
+  create: (data) => api.post('/categories', data),
+  update: (id, data) => api.put(`/categories/${id}`, data),
+  delete: (id) => api.delete(`/categories/${id}`),
 };
 
 // Brands API
 export const brandsApi = {
   getAll: () => api.get('/brands'),
   getById: (id) => api.get(`/brands/${id}`),
+  create: (data) => api.post('/brands', data),
+  update: (id, data) => api.put(`/brands/${id}`, data),
+  delete: (id) => api.delete(`/brands/${id}`),
 };
 
 // Chat API

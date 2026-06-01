@@ -62,6 +62,10 @@ import OrderReview from './pages/OrderReview';
 import ProfileAddresses from './pages/ProfileAddresses';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import FAQ from './pages/FAQ';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import Returns from './pages/Returns';
 import Category from './pages/Category';
 import NotFound from './pages/NotFound';
 import VerifyEmail from './pages/VerifyEmail';
@@ -104,6 +108,10 @@ function App() {
                 <Route path="profile/addresses" element={<ProfileAddresses />} />
                 <Route path="about" element={<About />} />
                 <Route path="contact" element={<Contact />} />
+                <Route path="faq" element={<FAQ />} />
+                <Route path="terms" element={<Terms />} />
+                <Route path="privacy" element={<Privacy />} />
+                <Route path="returns" element={<Returns />} />
                 <Route path="category/:slug" element={<Category />} />
                 <Route path="verify-email" element={<VerifyEmail />} />
                 <Route path="auth/google/callback" element={<GoogleCallback />} />

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Laptop, Smartphone, Headphones, Star } from 'lucide-react';
+import { ArrowRight, Laptop, Smartphone, Headphones, Star, Zap, Shirt, Home as HomeIcon, Dumbbell, BookOpen, Coffee, Gamepad2, Sparkles } from 'lucide-react';
 import api from '../services/api';
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -13,21 +14,28 @@ export default function Home() {
 
   const fetchData = async () => {
     try {
-      const [productsRes, categoriesRes] = await Promise.all([
+      const [productsRes, categoriesRes, brandsRes] = await Promise.all([
         api.get('/products', { params: { featured: true, limit: 8 } }),
         api.get('/categories', { params: { limit: 10 } }),
+        api.get('/brands', { params: { limit: 10 } }).catch(() => ({ data: [] })),
       ]);
       setFeaturedProducts(productsRes.data.products || []);
-      setCategories((categoriesRes.data || []).slice(0, 6));
+      setCategories((categoriesRes.data || []).slice(0, 8));
+      setBrands(brandsRes.data?.brands || brandsRes.data || []);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     }
   };
 
   const categoryIcons = {
-    laptop: Laptop,
-    phone: Smartphone,
-    audio: Headphones,
+    'electronics': Zap,
+    'fashion': Shirt,
+    'home-living': HomeIcon,
+    'sports': Dumbbell,
+    'books': BookOpen,
+    'beauty': Sparkles,
+    'food-beverages': Coffee,
+    'toys-games': Gamepad2,
   };
 
   return (
@@ -38,10 +46,10 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2">
               <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                Shop the Best Tech
+                Shop Everything You Love
               </h1>
               <p className="text-xl text-primary-100 mb-8">
-                Laptops, digital goods, and accessories at great prices
+                Discover amazing products across all categories at great prices
               </p>
               <Link to="/products" className="btn bg-white text-primary-600 hover:bg-gray-100 inline-flex items-center">
                 Shop Now <ArrowRight className="ml-2 h-5 w-5" />
@@ -59,7 +67,7 @@ export default function Home() {
         <h2 className="text-2xl font-bold mb-6">Shop by Category</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {categories.map(cat => {
-            const Icon = categoryIcons[cat.slug] || Laptop;
+            const Icon = categoryIcons[cat.slug] || Zap;
             return (
               <Link
                 key={cat.id}
@@ -73,6 +81,27 @@ export default function Home() {
           })}
         </div>
       </section>
+
+      {/* Brands */}
+      {brands.length > 0 && (
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-6">Shop by Brand</h2>
+          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+            {brands.map(brand => (
+              <Link
+                key={brand.id}
+                to={`/products?brand=${brand.id}`}
+                className="flex-shrink-0 card p-4 hover:shadow-lg transition-shadow flex items-center justify-center min-w-[140px]"
+              >
+                {brand.logo ? (
+                  <img src={brand.logo} alt={brand.name} className="h-10 object-contain" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} />
+                ) : null}
+                <span className={brand.logo ? 'hidden' : 'font-medium text-gray-700'}>{brand.name}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Featured Products */}
       <section className="mb-12">

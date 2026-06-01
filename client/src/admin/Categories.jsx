@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, X, Folder } from 'lucide-react';
+import { Plus, X, Edit, Trash2, Folder } from 'lucide-react';
 import { categoriesApi } from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -9,6 +9,8 @@ export default function AdminCategories() {
   const [showModal, setShowModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({ name: '', slug: '', icon: '' });
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   useEffect(() => { fetchCategories(); }, []);
 
@@ -20,19 +22,48 @@ export default function AdminCategories() {
     finally { setLoading(false); }
   };
 
+  const openAddModal = () => {
+    setEditingCategory(null);
+    setFormData({ name: '', slug: '', icon: '' });
+    setShowModal(true);
+  };
+
+  const openEditModal = (cat) => {
+    setEditingCategory(cat);
+    setFormData({ name: cat.name, slug: cat.slug, icon: cat.icon || '' });
+    setShowModal(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.post('/categories', formData);
-      toast.success('Category added!');
+      if (editingCategory) {
+        await categoriesApi.update(editingCategory.id, formData);
+        toast.success('Category updated!');
+      } else {
+        await categoriesApi.create(formData);
+        toast.success('Category added!');
+      }
       setShowModal(false);
+      setEditingCategory(null);
       setFormData({ name: '', slug: '', icon: '' });
       fetchCategories();
     } catch (error) {
-      toast.error('Failed to add category');
+      toast.error(editingCategory ? 'Failed to update category' : 'Failed to add category');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async (cat) => {
+    try {
+      await categoriesApi.delete(cat.id);
+      toast.success('Category deleted!');
+      setDeleteConfirm(null);
+      fetchCategories();
+    } catch (error) {
+      toast.error('Failed to delete category');
     }
   };
 
@@ -47,7 +78,7 @@ export default function AdminCategories() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Categories</h2>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary flex items-center">
+        <button onClick={openAddModal} className="btn btn-primary flex items-center">
           <Plus className="h-4 w-4 mr-2" />Add Category
         </button>
       </div>
@@ -59,7 +90,7 @@ export default function AdminCategories() {
               <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mr-3">
                 <Folder className="h-5 w-5 text-primary-600" />
               </div>
-              <div>
+              <div className="flex-1">
                 <h3 className="font-semibold">{cat.name}</h3>
                 <p className="text-sm text-gray-500">{cat._count?.products || 0} products</p>
               </div>
@@ -71,6 +102,14 @@ export default function AdminCategories() {
                 ))}
               </div>
             )}
+            <div className="flex justify-end gap-2 mt-3 pt-3 border-t border-gray-100">
+              <button onClick={() => openEditModal(cat)} className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                <Edit className="h-4 w-4" />
+              </button>
+              <button onClick={() => setDeleteConfirm(cat)} className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -79,8 +118,8 @@ export default function AdminCategories() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold">Add Category</h3>
-              <button onClick={() => setShowModal(false)}><X className="h-6 w-6" /></button>
+              <h3 className="text-xl font-bold">{editingCategory ? 'Edit Category' : 'Add Category'}</h3>
+              <button onClick={() => { setShowModal(false); setEditingCategory(null); }}><X className="h-6 w-6" /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -113,9 +152,22 @@ export default function AdminCategories() {
                 />
               </div>
               <button type="submit" disabled={saving} className="btn btn-primary w-full">
-                {saving ? 'Saving...' : 'Add Category'}
+                {saving ? 'Saving...' : editingCategory ? 'Update Category' : 'Add Category'}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-sm">
+            <h3 className="text-xl font-bold mb-2">Delete Category</h3>
+            <p className="text-gray-600 mb-6">Are you sure you want to delete <strong>{deleteConfirm.name}</strong>? This action cannot be undone.</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setDeleteConfirm(null)} className="btn btn-secondary">Cancel</button>
+              <button onClick={() => handleDelete(deleteConfirm)} className="btn bg-red-600 hover:bg-red-700 text-white">Delete</button>
+            </div>
           </div>
         </div>
       )}

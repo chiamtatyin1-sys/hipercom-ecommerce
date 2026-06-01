@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { accountingApi } from '../services/api';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 export default function SellerAnalytics() {
   const [salesData, setSalesData] = useState([]);
@@ -36,17 +37,15 @@ export default function SellerAnalytics() {
           {productData.length === 0 ? (
             <p className="text-gray-500 text-center py-4">No sales data yet</p>
           ) : (
-            <div className="space-y-3">
-              {productData.map((p, i) => (
-                <div key={i} className="flex justify-between items-center">
-                  <span>{p.name}</span>
-                  <div className="text-right">
-                    <span className="font-bold">RM {p.revenue.toFixed(2)}</span>
-                    <span className="text-gray-500 text-sm ml-2">({p.quantity} sold)</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={productData} layout="vertical" margin={{ left: 20, right: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" tickFormatter={(v) => `RM ${v}`} />
+                <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 12 }} />
+                <Tooltip formatter={(value) => `RM ${Number(value).toFixed(2)}`} />
+                <Bar dataKey="revenue" fill="#6366f1" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           )}
         </div>
         <div className="card p-6">
@@ -54,14 +53,15 @@ export default function SellerAnalytics() {
           {salesData.length === 0 ? (
             <p className="text-gray-500 text-center py-4">No sales data yet</p>
           ) : (
-            <div className="space-y-2">
-              {salesData.slice(-7).map((s, i) => (
-                <div key={i} className="flex justify-between">
-                  <span className="text-gray-500">{s.date}</span>
-                  <span className="font-medium">RM {s.revenue.toFixed(2)}</span>
-                </div>
-              ))}
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={salesData.slice(-14)} margin={{ left: 10, right: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+                <YAxis tickFormatter={(v) => `RM ${v}`} />
+                <Tooltip formatter={(value) => `RM ${Number(value).toFixed(2)}`} />
+                <Bar dataKey="revenue" fill="#10b981" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           )}
         </div>
       </div>

@@ -53,6 +53,7 @@ export default function Contact() {
         <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
           <MessageCircle className="h-6 w-6" /> Send us a Message
         </h2>
+        <p className="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">For demo purposes, this form is not connected to a backend.</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div>

@@ -9,18 +9,11 @@ export default function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    username: 'hipercom',
-    password: 'Hipercom123#',
+    username: '',
+    password: '',
   });
 
-  // Check for saved credentials on mount
-  useEffect(() => {
-    const savedUsername = localStorage.getItem('savedUsername');
-    const savedPassword = localStorage.getItem('savedPassword');
-    if (savedUsername && savedPassword) {
-      setFormData({ username: savedUsername, password: savedPassword });
-    }
-  }, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

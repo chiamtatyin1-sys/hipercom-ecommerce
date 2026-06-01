@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, X, Edit, Trash2 } from 'lucide-react';
-import api, { brandsApi } from '../services/api';
+import { brandsApi } from '../services/api';
 import toast from 'react-hot-toast';
 
 export default function AdminBrands() {
@@ -11,6 +11,8 @@ export default function AdminBrands() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [formData, setFormData] = useState({ name: '', slug: '', logo: '', description: '' });
+  const [editingBrand, setEditingBrand] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   useEffect(() => { fetchBrands(); }, []);
 
@@ -22,32 +24,68 @@ export default function AdminBrands() {
     finally { setLoading(false); }
   };
 
+  const openAddModal = () => {
+    setEditingBrand(null);
+    setFormData({ name: '', slug: '', logo: '', description: '' });
+    setSelectedFile(null);
+    setPreviewUrl('');
+    setShowModal(true);
+  };
+
+  const openEditModal = (brand) => {
+    setEditingBrand(brand);
+    setFormData({ name: brand.name, slug: brand.slug, logo: brand.logo || '', description: brand.description || '' });
+    setSelectedFile(null);
+    setPreviewUrl(brand.logo || '');
+    setShowModal(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('slug', formData.slug);
-      formDataToSend.append('description', formData.description || '');
-      if (selectedFile) {
-        formDataToSend.append('logo', selectedFile);
+      if (editingBrand) {
+        const formDataToSend = new FormData();
+        formDataToSend.append('name', formData.name);
+        formDataToSend.append('slug', formData.slug);
+        formDataToSend.append('description', formData.description || '');
+        if (selectedFile) {
+          formDataToSend.append('logo', selectedFile);
+        }
+        await brandsApi.update(editingBrand.id, formDataToSend);
+        toast.success('Brand updated!');
+      } else {
+        const formDataToSend = new FormData();
+        formDataToSend.append('name', formData.name);
+        formDataToSend.append('slug', formData.slug);
+        formDataToSend.append('description', formData.description || '');
+        if (selectedFile) {
+          formDataToSend.append('logo', selectedFile);
+        }
+        await brandsApi.create(formDataToSend);
+        toast.success('Brand added!');
       }
-
-      await api.post('/brands', formDataToSend, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-
-      toast.success('Brand added!');
       setShowModal(false);
+      setEditingBrand(null);
       setFormData({ name: '', slug: '', logo: '', description: '' });
       setSelectedFile(null);
       setPreviewUrl('');
       fetchBrands();
     } catch (error) {
-      toast.error('Failed to add brand');
+      toast.error(editingBrand ? 'Failed to update brand' : 'Failed to add brand');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async (brand) => {
+    try {
+      await brandsApi.delete(brand.id);
+      toast.success('Brand deleted!');
+      setDeleteConfirm(null);
+      fetchBrands();
+    } catch (error) {
+      toast.error('Failed to delete brand');
     }
   };
 
@@ -70,25 +108,35 @@ export default function AdminBrands() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Brands</h2>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary flex items-center">
+        <button onClick={openAddModal} className="btn btn-primary flex items-center">
           <Plus className="h-4 w-4 mr-2" />Add Brand
         </button>
       </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {brands.map(brand => (
-            <div key={brand.id} className="card p-4 flex items-center">
-              {brand.logo ? (
-                <>
-                  <img src={brand.logo} alt={brand.name} className="w-12 h-12 rounded-lg mr-4 object-contain bg-white" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-                  <span className="w-12 h-12 rounded-lg mr-4 bg-indigo-100 text-indigo-600 items-center justify-center font-bold text-sm" style={{ display: 'none' }}>{brand.name.charAt(0)}</span>
-                </>
-              ) : (
-                <span className="w-12 h-12 rounded-lg mr-4 bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">{brand.name.charAt(0)}</span>
-              )}
-              <div className="flex-1">
-                <h3 className="font-semibold">{brand.name}</h3>
-                <p className="text-sm text-gray-500">{brand._count?.products || 0} products</p>
+            <div key={brand.id} className="card p-4">
+              <div className="flex items-center">
+                {brand.logo ? (
+                  <>
+                    <img src={brand.logo} alt={brand.name} className="w-12 h-12 rounded-lg mr-4 object-contain bg-white" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                    <span className="w-12 h-12 rounded-lg mr-4 bg-indigo-100 text-indigo-600 items-center justify-center font-bold text-sm" style={{ display: 'none' }}>{brand.name.charAt(0)}</span>
+                  </>
+                ) : (
+                  <span className="w-12 h-12 rounded-lg mr-4 bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">{brand.name.charAt(0)}</span>
+                )}
+                <div className="flex-1">
+                  <h3 className="font-semibold">{brand.name}</h3>
+                  <p className="text-sm text-gray-500">{brand._count?.products || 0} products</p>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-3 pt-3 border-t border-gray-100">
+                <button onClick={() => openEditModal(brand)} className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                  <Edit className="h-4 w-4" />
+                </button>
+                <button onClick={() => setDeleteConfirm(brand)} className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                  <Trash2 className="h-4 w-4" />
+                </button>
               </div>
             </div>
           ))}
@@ -98,8 +146,8 @@ export default function AdminBrands() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold">Add New Brand</h3>
-              <button onClick={() => setShowModal(false)}><X className="h-6 w-6" /></button>
+              <h3 className="text-xl font-bold">{editingBrand ? 'Edit Brand' : 'Add New Brand'}</h3>
+              <button onClick={() => { setShowModal(false); setEditingBrand(null); }}><X className="h-6 w-6" /></button>
             </div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
@@ -144,9 +192,22 @@ export default function AdminBrands() {
                   />
                 </div>
                 <button type="submit" disabled={saving} className="btn btn-primary w-full">
-                  {saving ? 'Saving...' : 'Add Brand'}
+                  {saving ? 'Saving...' : editingBrand ? 'Update Brand' : 'Add Brand'}
                 </button>
               </form>
+          </div>
+        </div>
+      )}
+
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-sm">
+            <h3 className="text-xl font-bold mb-2">Delete Brand</h3>
+            <p className="text-gray-600 mb-6">Are you sure you want to delete <strong>{deleteConfirm.name}</strong>? This action cannot be undone.</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setDeleteConfirm(null)} className="btn btn-secondary">Cancel</button>
+              <button onClick={() => handleDelete(deleteConfirm)} className="btn bg-red-600 hover:bg-red-700 text-white">Delete</button>
+            </div>
           </div>
         </div>
       )}

@@ -140,8 +140,8 @@ export default function Layout() {
             </form>
             <nav className="space-y-2">
               <Link to="/products" className="block py-2 text-gray-700">All Products</Link>
-              <Link to="/products" className="block py-2 text-gray-700">Laptops</Link>
-              <Link to="/products" className="block py-2 text-gray-700">Digital Goods</Link>
+              <Link to="/products?search=laptop" className="block py-2 text-gray-700">Laptops</Link>
+              <Link to="/products?search=digital" className="block py-2 text-gray-700">Digital Goods</Link>
             </nav>
           </div>
         )}
@@ -164,8 +164,8 @@ export default function Layout() {
               <h4 className="font-semibold mb-4">Shop</h4>
               <ul className="space-y-2 text-gray-400">
                 <li><Link to="/products" className="hover:text-white">All Products</Link></li>
-                <li><Link to="/products?category=laptop" className="hover:text-white">Laptops</Link></li>
-                <li><Link to="/products?category=digital" className="hover:text-white">Digital Goods</Link></li>
+                <li><Link to="/products?search=laptop" className="hover:text-white">Laptops</Link></li>
+                <li><Link to="/products?search=digital" className="hover:text-white">Digital Goods</Link></li>
               </ul>
             </div>
             <div>
@@ -173,12 +173,16 @@ export default function Layout() {
               <ul className="space-y-2 text-gray-400">
                 <li><Link to="/contact" className="hover:text-white">Contact Us</Link></li>
                 <li><Link to="/about" className="hover:text-white">About Us</Link></li>
+                <li><Link to="/faq" className="hover:text-white">FAQ</Link></li>
                 <li><Link to="/track-order" className="hover:text-white">Track Order</Link></li>
+                <li><Link to="/returns" className="hover:text-white">Returns Policy</Link></li>
+                <li><Link to="/terms" className="hover:text-white">Terms &amp; Conditions</Link></li>
+                <li><Link to="/privacy" className="hover:text-white">Privacy Policy</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Contact</h4>
-              <p className="text-gray-400">support@hipercom.com</p>
+              <p className="text-gray-400">info@hipercom.com.my</p>
               <p className="text-gray-400">+60 123 456 789</p>
             </div>
           </div>

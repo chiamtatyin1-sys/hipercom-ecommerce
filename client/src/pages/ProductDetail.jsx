@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Star, Truck, Shield, RefreshCw, Check, Heart, Send } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
@@ -10,6 +10,7 @@ export default function ProductDetail() {
   const { slug } = useParams();
   const { addToCart } = useCart();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
