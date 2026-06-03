@@ -37,7 +37,7 @@ export default function Cart() {
               <div key={item.id} className={`card p-4 flex items-center ${isOutOfStock ? 'opacity-60 bg-gray-50' : ''}`}>
                 <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
                   {item.product.images?.[0] ? (
-                    <img src={item.product.images[0]} alt={item.product.name} className="w-full h-full object-cover" />
+                    <img src={item.product.images[0]} alt={item.product.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder-product.svg'; }} />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <Package className="h-8 w-8 text-gray-300" />

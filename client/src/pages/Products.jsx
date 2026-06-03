@@ -215,7 +215,7 @@ export default function Products() {
                 <Link key={product.id} to={`/products/${product.slug}`} className="card overflow-hidden hover:shadow-lg transition-shadow group">
                   <div className="aspect-square bg-gray-100 relative">
                     {product.images?.[0] ? (
-                      <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                      <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder-product.svg'; }} />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
                     )}

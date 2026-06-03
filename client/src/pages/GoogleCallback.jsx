@@ -26,7 +26,8 @@ export default function GoogleCallback() {
       }
 
       try {
-        const res = await api.post('/auth/google/callback', { code });
+        const redirectUri = `${window.location.origin}/auth/google/callback`;
+        const res = await api.post('/auth/google/callback', { code, redirectUri });
         localStorage.setItem('token', res.data.token);
         window.dispatchEvent(new Event('auth:login'));
         window.dispatchEvent(new Event('cart:refresh'));

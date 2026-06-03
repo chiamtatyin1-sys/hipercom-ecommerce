@@ -225,6 +225,7 @@ export default function AISearch() {
                       src={product.images[0]}
                       alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder-product.svg'; }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-300">

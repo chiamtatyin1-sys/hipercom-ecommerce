@@ -134,8 +134,9 @@ export default function ProductDetail() {
               <img
                 src={images[selectedImage]}
                 alt={product.name}
-                className="w-full h-full object-cover cursor-zoom-in"
-                onClick={() => setShowZoom(true)}
+                  className="w-full h-full object-cover cursor-zoom-in"
+                  onClick={() => setShowZoom(true)}
+                  onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder-product.svg'; }}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
@@ -173,7 +174,7 @@ export default function ProductDetail() {
                   onClick={() => setSelectedImage(idx)}
                   className={`aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 transition-colors ${selectedImage === idx ? 'border-primary-500' : 'border-transparent hover:border-gray-300'}`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <img src={img} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder-product.svg'; }} />
                 </button>
               ))}
             </div>
@@ -368,7 +369,7 @@ export default function ProductDetail() {
                   onClick={(e) => { e.stopPropagation(); setSelectedImage(idx); }}
                   className={`w-16 h-16 rounded border-2 overflow-hidden ${selectedImage === idx ? 'border-white' : 'border-transparent opacity-50'}`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <img src={img} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder-product.svg'; }} />
                 </button>
               ))}
             </div>

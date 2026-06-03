@@ -77,7 +77,7 @@ export default function Category() {
                 <Link to={`/products/${product.slug}`}>
                   <div className="aspect-square bg-gray-100 rounded-lg mb-2 overflow-hidden">
                     {images[0] ? (
-                      <img src={images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                      <img src={images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder-product.svg'; }} />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Image</div>
                     )}

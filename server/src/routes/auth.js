@@ -275,7 +275,7 @@ router.post('/google', async (req, res) => {
 
 router.post('/google/callback', async (req, res) => {
   try {
-    const { code } = req.body;
+    const { code, redirectUri } = req.body;
 
     if (!code) {
       return res.status(400).json({ error: 'Authorization code required' });
@@ -289,7 +289,7 @@ router.post('/google/callback', async (req, res) => {
         code,
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: `${process.env.CLIENT_URL}/auth/google/callback`,
+        redirect_uri: redirectUri || `${process.env.CLIENT_URL}/auth/google/callback`,
         grant_type: 'authorization_code',
       }),
     });
