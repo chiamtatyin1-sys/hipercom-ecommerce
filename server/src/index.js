@@ -4,6 +4,9 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import rateLimit from 'express-rate-limit';
+
+const app = express();
+dotenv.config();
 import prisma from './db/prisma.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -54,7 +57,6 @@ import { errorHandler, notFoundHandler, sanitizeInput } from './middleware/error
 
 dotenv.config();
 
-const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors({

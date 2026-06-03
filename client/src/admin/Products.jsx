@@ -67,9 +67,9 @@ export default function AdminProducts() {
     if (imageFiles.length === 0) return;
     setUploading(true);
     try {
-      const formData = new FormData();
-      imageFiles.forEach(file => formData.append('images', file));
-      const res = await productsApi.uploadImages(formData);
+      const uploadFormData = new FormData();
+      imageFiles.forEach(file => uploadFormData.append('images', file));
+      const res = await productsApi.uploadImages(uploadFormData);
       const existingImages = formData.images ? JSON.parse(formData.images || '[]') : [];
       const allImages = [...existingImages, ...res.data.images];
       setFormData(prev => ({ ...prev, images: JSON.stringify(allImages) }));

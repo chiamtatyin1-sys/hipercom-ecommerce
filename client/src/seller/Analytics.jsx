@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { accountingApi } from '../services/api';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function SellerAnalytics() {
   const [salesData, setSalesData] = useState([]);
@@ -15,8 +15,8 @@ export default function SellerAnalytics() {
         accountingApi.getSalesReport({ groupBy: 'day' }),
         accountingApi.getProductsReport({ limit: 10 }),
       ]);
-      setSalesData(sales.data);
-      setProductData(products.data);
+      setSalesData(Array.isArray(sales?.data) ? sales.data : Array.isArray(sales) ? sales : []);
+      setProductData(Array.isArray(products?.data) ? products.data : Array.isArray(products) ? products : []);
     } catch (error) { console.error(error); }
     finally { setLoading(false); }
   };

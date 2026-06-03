@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, X } from 'lucide-react';
-import api from '../services/api';
+import { Plus, Edit, Trash2, X, Upload } from 'lucide-react';
+import api, { productsApi } from '../services/api';
 import toast from 'react-hot-toast';
 
 export default function SellerProducts() {
@@ -19,7 +19,11 @@ export default function SellerProducts() {
     stock: '',
     categoryId: '',
     brandId: '',
+    images: '',
   });
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imageUrls, setImageUrls] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => { fetchData(); }, []);
 
@@ -35,6 +39,37 @@ export default function SellerProducts() {
       setBrands(brandsRes.data);
     } catch (error) { console.error(error); }
     finally { setLoading(false); }
+  };
+
+  const handleImageSelect = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 5) {
+      toast.error('Maximum 5 images allowed');
+      return;
+    }
+    setImageFiles(files);
+    const urls = files.map(f => URL.createObjectURL(f));
+    setImageUrls(urls);
+  };
+
+  const handleImageUpload = async () => {
+    if (imageFiles.length === 0) return;
+    setUploading(true);
+    try {
+      const uploadFormData = new FormData();
+      imageFiles.forEach(file => uploadFormData.append('images', file));
+      const res = await productsApi.uploadImages(uploadFormData);
+      const existingImages = formData.images ? JSON.parse(formData.images || '[]') : [];
+      const allImages = [...existingImages, ...res.data.images];
+      setFormData(prev => ({ ...prev, images: JSON.stringify(allImages) }));
+      toast.success(`${res.data.images.length} image(s) uploaded`);
+      setImageFiles([]);
+      setImageUrls([]);
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -55,7 +90,9 @@ export default function SellerProducts() {
       }
       setShowModal(false);
       setEditingProduct(null);
-      setFormData({ name: '', price: '', sku: '', description: '', stock: '', categoryId: '', brandId: '' });
+      setFormData({ name: '', price: '', sku: '', description: '', stock: '', categoryId: '', brandId: '', images: '' });
+      setImageFiles([]);
+      setImageUrls([]);
       fetchData();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Failed to save product');
@@ -67,7 +104,9 @@ export default function SellerProducts() {
   const closeModal = () => {
     setShowModal(false);
     setEditingProduct(null);
-    setFormData({ name: '', price: '', sku: '', description: '', stock: '', categoryId: '', brandId: '' });
+    setFormData({ name: '', price: '', sku: '', description: '', stock: '', categoryId: '', brandId: '', images: '' });
+    setImageFiles([]);
+    setImageUrls([]);
   };
 
   const handleDelete = async (id) => {
@@ -135,6 +174,7 @@ export default function SellerProducts() {
                       stock: p.stock || '',
                       categoryId: p.categoryId || '',
                       brandId: p.brandId || '',
+                      images: typeof p.images === 'string' ? p.images : JSON.stringify(p.images || []),
                     });
                     setShowModal(true);
                   }} className="text-primary-600 hover:text-primary-700"><Edit className="h-4 w-4" /></button>
@@ -246,6 +286,36 @@ export default function SellerProducts() {
                   className="input h-24"
                   placeholder="Product description..."
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Product Images</label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="input"
+                />
+                {imageUrls.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {imageUrls.map((url, i) => (
+                      <img key={i} src={url} alt="" className="h-16 w-16 object-cover rounded" />
+                    ))}
+                  </div>
+                )}
+                {formData.images && JSON.parse(formData.images || '[]').length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {JSON.parse(formData.images).map((url, i) => (
+                      <img key={`existing-${i}`} src={url} alt="" className="h-16 w-16 object-cover rounded" />
+                    ))}
+                  </div>
+                )}
+                {imageFiles.length > 0 && (
+                  <button type="button" onClick={handleImageUpload} disabled={uploading} className="btn btn-secondary mt-2 flex items-center">
+                    <Upload className="h-4 w-4 mr-2" />{uploading ? 'Uploading...' : 'Upload Images'}
+                  </button>
+                )}
               </div>
 
               <button type="submit" disabled={saving} className="btn btn-primary w-full">

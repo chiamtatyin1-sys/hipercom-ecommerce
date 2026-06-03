@@ -19,13 +19,15 @@ export default function AdminDashboard() {
     setLoading(true);
     try {
       const days = parseInt(dateRange);
+      const endDate = new Date();
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
+      const prevEnd = new Date(startDate);
       const prevStart = new Date();
       prevStart.setDate(prevStart.getDate() - days * 2);
       const [currRes, prevRes] = await Promise.all([
-        api.get(`/analytics?startDate=${startDate.toISOString()}`),
-        api.get(`/analytics?startDate=${prevStart.toISOString()}`),
+        api.get(`/analytics?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`),
+        api.get(`/analytics?startDate=${prevStart.toISOString()}&endDate=${prevEnd.toISOString()}`),
       ]);
       setData(currRes.data);
       setPrevData(prevRes.data);
