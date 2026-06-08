@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { Search, User, Menu, X, MessageCircle, Heart, ShoppingCart, ChevronDown, Package, Truck, Sparkles, Home, Shirt, Zap, Dumbbell, BookOpen, Coffee, Gamepad2, Monitor, MapPin, Phone, Mail, Send } from 'lucide-react';
+import { Search, User, Menu, X, MessageCircle, Heart, ShoppingCart, Package, Truck, Sparkles, Home, Shirt, Zap, Dumbbell, BookOpen, Coffee, Gamepad2, Monitor, MapPin, Phone, Mail } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import ChatBot from './ChatBot';
@@ -27,10 +27,8 @@ export default function Layout() {
   const [showChat, setShowChat] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [catDropdown, setCatDropdown] = useState(false);
   const [categories, setCategories] = useState([]);
   const userMenuRef = useRef(null);
-  const catRef = useRef(null);
 
   useEffect(() => {
     api.get('/categories', { params: { limit: 20 } })
@@ -41,13 +39,12 @@ export default function Layout() {
   useEffect(() => {
     const h = (e) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) setUserMenuOpen(false);
-      if (catRef.current && !catRef.current.contains(e.target)) setCatDropdown(false);
     };
     document.addEventListener('mousedown', h);
     return () => document.removeEventListener('mousedown', h);
   }, []);
 
-  useEffect(() => { setMobileOpen(false); setCatDropdown(false); }, [location]);
+  useEffect(() => { setMobileOpen(false); }, [location]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -118,62 +115,8 @@ export default function Layout() {
               Hiper<span className="text-blue-600">Com</span>
             </Link>
 
-            {/* Desktop Nav Links */}
-            <nav className="hidden lg:flex items-center gap-0.5 ml-4">
-              <Link to="/" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isHome ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}>
-                Home
-              </Link>
-              <Link to="/products" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${location.pathname.startsWith('/products') ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}>
-                Products
-              </Link>
-
-              {/* Categories Dropdown */}
-              <div className="relative" ref={catRef}>
-                <button
-                  onClick={() => setCatDropdown(!catDropdown)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-1 ${location.pathname.startsWith('/category') ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
-                >
-                  Categories <ChevronDown className={`h-3.5 w-3.5 transition-transform ${catDropdown ? 'rotate-180' : ''}`} />
-                </button>
-                {catDropdown && (
-                  <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-xl shadow-xl border border-slate-200 py-3 z-50 animate-[fadeIn_0.15s_ease-out]">
-                    <div className="grid grid-cols-2 gap-1 px-2">
-                      {categories.length > 0 ? categories.map(cat => {
-                        const Icon = categoryIcons[cat.slug] || Package;
-                        return (
-                          <Link
-                            key={cat.id}
-                            to={`/category/${cat.slug}`}
-                            onClick={() => setCatDropdown(false)}
-                            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors"
-                          >
-                            <Icon className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                            {cat.name}
-                          </Link>
-                        );
-                      }) : (
-                        <div className="col-span-2 px-3 py-4 text-sm text-slate-400 text-center">Loading categories...</div>
-                      )}
-                    </div>
-                    <div className="border-t border-slate-100 mt-2 pt-2 px-4">
-                      <Link to="/products" onClick={() => setCatDropdown(false)} className="text-xs text-blue-600 hover:text-blue-700 font-medium">
-                        View all products ›
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <Link to="/ai-search" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-1.5 ${location.pathname === '/ai-search' ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}>
-                <Sparkles className="h-3.5 w-3.5" /> AI Search
-              </Link>
-              <Link to="/about" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${location.pathname === '/about' ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}>
-                About
-              </Link>
-            </nav>
-
-            {/* Search */}
-            <form onSubmit={handleSearch} className="hidden sm:flex flex-1 max-w-md ml-auto">
+            {/* Search - desktop only */}
+            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md ml-auto">
               <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <input
@@ -187,7 +130,7 @@ export default function Layout() {
             </form>
 
             {/* Right Icons */}
-            <div className="flex items-center gap-1 flex-shrink-0">
+            <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
               <Link to="/wishlist" className="p-2 text-slate-500 hover:text-red-500 rounded-lg hover:bg-slate-100 transition-colors">
                 <Heart className="h-5 w-5" />
               </Link>
@@ -210,7 +153,7 @@ export default function Layout() {
                     </div>
                   </button>
                   {userMenuOpen && (
-                    <div className="absolute right-0 mt-1 w-56 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 animate-[fadeIn_0.12s_ease-out]">
+                    <div className="absolute right-0 mt-1 w-56 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50">
                       <div className="px-4 py-2 border-b border-slate-100">
                         <p className="text-sm font-medium text-slate-900">{user.username}</p>
                         <p className="text-xs text-slate-500">{user.email}</p>
@@ -232,11 +175,11 @@ export default function Layout() {
                   )}
                 </div>
               ) : (
-                <Link to="/login" className="btn btn-primary btn-sm">Sign In</Link>
+                <Link to="/login" className="btn btn-primary btn-sm hidden md:inline-flex">Sign In</Link>
               )}
 
-              {/* Mobile Toggle */}
-              <button onClick={() => setMobileOpen(true)} className="lg:hidden p-2 text-slate-600 rounded-lg hover:bg-slate-100">
+              {/* Hamburger - tablet and below */}
+              <button onClick={() => setMobileOpen(true)} className="p-2 text-slate-600 rounded-lg hover:bg-slate-100 md:hidden">
                 <Menu className="h-5 w-5" />
               </button>
             </div>
@@ -248,7 +191,7 @@ export default function Layout() {
       {mobileOpen && (
         <div className="fixed inset-0 z-[60] lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-          <div className="absolute right-0 top-0 h-full w-80 bg-white shadow-2xl animate-[slideIn_0.2s_ease-out]">
+          <div className="absolute right-0 top-0 h-full w-80 bg-white shadow-2xl animate-fade-slide-in">
             <div className="flex items-center justify-between p-4 border-b">
               <span className="font-bold text-lg">Menu</span>
               <button onClick={() => setMobileOpen(false)} className="p-1 rounded-lg hover:bg-slate-100">
