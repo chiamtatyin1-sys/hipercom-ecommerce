@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Package, Clock, CheckCircle, XCircle, Star, Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Package, Clock, CheckCircle, XCircle, Star } from 'lucide-react';
 import { ordersApi } from '../services/api';
 import toast from 'react-hot-toast';
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  useEffect(() => { fetchOrders(); }, []);
 
   const fetchOrders = async () => {
     try {
@@ -35,105 +32,90 @@ export default function Orders() {
     }
   };
 
-  const statusIcons = {
-    pending: Clock,
-    paid: CheckCircle,
-    processing: Package,
-    shipped: Package,
-    delivered: CheckCircle,
-    cancelled: XCircle,
+  const statusConfig = {
+    pending: { icon: Clock, color: 'badge-warning' },
+    paid: { icon: CheckCircle, color: 'badge-info' },
+    processing: { icon: Package, color: 'badge-info' },
+    shipped: { icon: Package, color: 'badge-info' },
+    delivered: { icon: CheckCircle, color: 'badge-success' },
+    cancelled: { icon: XCircle, color: 'badge-error' },
   };
 
-  const statusColors = {
-    pending: 'badge-warning',
-    paid: 'badge-info',
-    processing: 'badge-info',
-    shipped: 'badge-info',
-    delivered: 'badge-success',
-    cancelled: 'badge-error',
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-        <span className="ml-3 text-gray-500">Loading orders...</span>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="flex items-center justify-center h-64">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <span className="ml-3 text-slate-500 text-sm">Loading orders...</span>
+    </div>
+  );
 
   if (orders.length === 0) {
     return (
       <div className="text-center py-20">
-        <Package className="h-20 w-20 mx-auto text-gray-300 mb-4" />
-        <h2 className="text-2xl font-semibold mb-2">No orders yet</h2>
-        <p className="text-gray-500 mb-6">Start shopping to see your orders here.</p>
-        <Link to="/products" className="btn btn-primary">Browse Products</Link>
+        <div className="w-16 h-16 mx-auto mb-4 bg-slate-100 rounded-full flex items-center justify-center">
+          <Package className="h-8 w-8 text-slate-300" />
+        </div>
+        <h2 className="text-xl font-semibold text-slate-900 mb-2">No orders yet</h2>
+        <p className="text-sm text-slate-500 mb-4">Start shopping to see your orders here.</p>
+        <Link to="/products" className="btn btn-primary btn-sm">Browse Products</Link>
       </div>
     );
   }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">My Orders</h1>
+      <h1 className="text-2xl font-bold text-slate-900 mb-6">My Orders</h1>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {orders.map(order => {
-          const StatusIcon = statusIcons[order.status] || Clock;
-          
+          const StatusIcon = statusConfig[order.status]?.icon || Clock;
+          const statusColor = statusConfig[order.status]?.color || 'badge-neutral';
+
           return (
-            <div key={order.id} className="card p-6">
+            <div key={order.id} className="card-static p-5">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="font-semibold text-lg">Order #{order.orderNumber}</p>
-                  <p className="text-gray-500 text-sm">
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </p>
+                  <p className="font-semibold text-slate-900">Order #{order.orderNumber}</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{new Date(order.createdAt).toLocaleDateString()}</p>
                 </div>
-                <span className={`badge ${statusColors[order.status]}`}>
-                  <StatusIcon className="h-4 w-4 mr-1" />
+                <span className={`badge ${statusColor}`}>
+                  <StatusIcon className="h-3 w-3 mr-1" />
                   {order.status}
                 </span>
               </div>
 
-              <div className="border-t pt-4">
-                <div className="grid md:grid-cols-4 gap-4">
+              <div className="border-t border-slate-100 pt-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
-                    <p className="text-sm text-gray-500">Items</p>
-                    <p className="font-medium">{order.items?.length || 0} product(s)</p>
+                    <p className="text-xs text-slate-400">Items</p>
+                    <p className="font-medium text-slate-700">{order.items?.length || 0} product(s)</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Total</p>
-                    <p className="font-medium text-primary-600">RM {order.total.toFixed(2)}</p>
+                    <p className="text-xs text-slate-400">Total</p>
+                    <p className="font-bold text-slate-900">RM {order.total.toFixed(2)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Payment</p>
-                    <p className="font-medium">{order.paymentStatus}</p>
+                    <p className="text-xs text-slate-400">Payment</p>
+                    <p className="font-medium text-slate-700">{order.paymentStatus}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Delivery</p>
-                    <p className="font-medium">{order.deliveryType}</p>
+                    <p className="text-xs text-slate-400">Delivery</p>
+                    <p className="font-medium text-slate-700">{order.deliveryType}</p>
                   </div>
                 </div>
               </div>
 
               <div className="mt-4 flex justify-end gap-2">
                 {order.status === 'pending' && (
-                  <button
-                    onClick={() => cancelOrder(order.id)}
-                    className="btn btn-error flex items-center gap-2"
-                  >
-                    <Trash2 className="h-4 w-4" /> Cancel
+                  <button onClick={() => cancelOrder(order.id)} className="btn btn-sm btn-outline text-red-500 hover:text-red-600 border-red-200 hover:border-red-300">
+                    Cancel
                   </button>
                 )}
                 {order.status === 'delivered' && (
-                  <Link to={`/orders/${order.id}/review`} className="btn btn-secondary flex items-center gap-2">
-                    <Star className="h-4 w-4" /> Review
+                  <Link to={`/orders/${order.id}/review`} className="btn btn-sm btn-outline">
+                    <Star className="h-3 w-3 mr-1" /> Review
                   </Link>
                 )}
-                <Link to={`/orders/${order.id}`} className="btn btn-secondary">
-                  View Details
-                </Link>
+                <Link to={`/orders/${order.id}`} className="btn btn-sm btn-secondary">View Details</Link>
               </div>
             </div>
           );

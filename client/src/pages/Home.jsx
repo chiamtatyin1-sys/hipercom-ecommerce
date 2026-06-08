@@ -1,16 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Laptop, Smartphone, Headphones, Star, Zap, Shirt, Home as HomeIcon, Dumbbell, BookOpen, Coffee, Gamepad2, Sparkles } from 'lucide-react';
+import { ArrowRight, Star, Zap, Shirt, Home as HomeIcon, Dumbbell, BookOpen, Coffee, Gamepad2, Sparkles, Truck, Shield, Headphones, ChevronRight } from 'lucide-react';
 import api from '../services/api';
+
+const categoryIcons = {
+  electronics: Zap,
+  fashion: Shirt,
+  'home-living': HomeIcon,
+  sports: Dumbbell,
+  books: BookOpen,
+  beauty: Sparkles,
+  'food-beverages': Coffee,
+  'toys-games': Gamepad2,
+};
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useEffect(() => { fetchData(); }, []);
 
   const fetchData = async () => {
     try {
@@ -27,55 +36,67 @@ export default function Home() {
     }
   };
 
-  const categoryIcons = {
-    'electronics': Zap,
-    'fashion': Shirt,
-    'home-living': HomeIcon,
-    'sports': Dumbbell,
-    'books': BookOpen,
-    'beauty': Sparkles,
-    'food-beverages': Coffee,
-    'toys-games': Gamepad2,
-  };
-
   return (
     <div>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-20 rounded-2xl mb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="md:w-1/2">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                Shop Everything You Love
-              </h1>
-              <p className="text-xl text-primary-100 mb-8">
-                Discover amazing products across all categories at great prices
-              </p>
-              <Link to="/products" className="btn bg-white text-primary-600 hover:bg-gray-100 inline-flex items-center">
-                Shop Now <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </div>
-            <div className="md:w-1/2 mt-8 md:mt-0">
-              <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600" alt="Laptop" className="rounded-xl shadow-2xl" />
-            </div>
+      {/* Hero */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="bg-slate-900 rounded-2xl p-8 md:p-12 flex flex-col justify-center text-white">
+          <span className="text-blue-400 text-sm font-medium mb-3 tracking-wide uppercase">New Arrivals</span>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 tracking-tight">
+            Everything You
+            <br />
+            <span className="text-blue-400">Love, Delivered</span>
+          </h1>
+          <p className="text-slate-400 text-sm md:text-base mb-8 max-w-md leading-relaxed">
+            From electronics to fashion, beauty to books — shop across 8 categories with free shipping on orders over RM100.
+          </p>
+          <div className="flex items-center gap-3">
+            <Link to="/products" className="btn btn-primary btn-lg rounded-xl bg-blue-500 hover:bg-blue-400 border-0">
+              Shop Now <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+            <Link to="/about" className="text-sm text-slate-400 hover:text-white transition-colors">About Us</Link>
+          </div>
+        </div>
+        <div className="bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl p-8 md:p-12 flex flex-col justify-center text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/4 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/4 -translate-x-1/4" />
+          <div className="relative">
+            <Sparkles className="h-8 w-8 mb-4 text-blue-200" />
+            <h2 className="text-2xl md:text-3xl font-bold mb-3 tracking-tight">AI-Powered Shopping</h2>
+            <p className="text-blue-100 text-sm mb-6 leading-relaxed">
+              Can't find what you need? Describe it to our AI and let it find the perfect product for you.
+            </p>
+            <Link to="/ai-search" className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors">
+              Try AI Search <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Categories */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Shop by Category</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">Shop by Category</h2>
+            <p className="text-sm text-slate-500 mt-0.5">Find exactly what you're looking for</p>
+          </div>
+          <Link to="/products" className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+            View All <ChevronRight className="h-4 w-4" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {categories.map(cat => {
-            const Icon = categoryIcons[cat.slug] || Zap;
+            const Icon = categoryIcons[cat.slug] || Sparkles;
             return (
               <Link
                 key={cat.id}
-                to={`/products?category=${cat.id}`}
-                className="card p-6 text-center hover:shadow-lg transition-shadow"
+                to={`/category/${cat.slug}`}
+                className="group card-static p-5 text-center hover:border-blue-200 hover:shadow-md transition-all"
               >
-                <Icon className="h-10 w-10 mx-auto text-primary-600 mb-3" />
-                <span className="font-medium">{cat.name}</span>
+                <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-slate-100 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
+                  <Icon className="h-6 w-6 text-slate-600 group-hover:text-blue-600 transition-colors" />
+                </div>
+                <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">{cat.name}</span>
               </Link>
             );
           })}
@@ -85,18 +106,28 @@ export default function Home() {
       {/* Brands */}
       {brands.length > 0 && (
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">Shop by Brand</h2>
-          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">Top Brands</h2>
+              <p className="text-sm text-slate-500 mt-0.5">Shop from your favorite brands</p>
+            </div>
+          </div>
+          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
             {brands.map(brand => (
               <Link
                 key={brand.id}
                 to={`/products?brand=${brand.id}`}
-                className="flex-shrink-0 card p-4 hover:shadow-lg transition-shadow flex items-center justify-center min-w-[140px]"
+                className="card-static flex-shrink-0 p-4 min-w-[140px] flex flex-col items-center justify-center gap-2 hover:border-blue-200 transition-all"
               >
                 {brand.logo ? (
-                  <img src={brand.logo} alt={brand.name} className="h-10 object-contain" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} />
-                ) : null}
-                <span className={brand.logo ? 'hidden' : 'font-medium text-gray-700'}>{brand.name}</span>
+                  <>
+                    <img src={brand.logo} alt={brand.name} className="h-8 object-contain" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                    <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg items-center justify-center font-bold text-xs hidden">{brand.name.charAt(0)}</span>
+                  </>
+                ) : (
+                  <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center font-bold text-xs">{brand.name.charAt(0)}</span>
+                )}
+                <span className="text-xs text-slate-500">{brand.name}</span>
               </Link>
             ))}
           </div>
@@ -106,39 +137,37 @@ export default function Home() {
       {/* Featured Products */}
       <section className="mb-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Featured Products</h2>
-          <Link to="/products" className="text-primary-600 hover:text-primary-700 flex items-center">
-            View All <ArrowRight className="ml-1 h-4 w-4" />
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">Featured Products</h2>
+            <p className="text-sm text-slate-500 mt-0.5">Handpicked for you</p>
+          </div>
+          <Link to="/products" className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+            View All <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {featuredProducts.map(product => (
-            <Link key={product.id} to={`/products/${product.slug}`} className="card overflow-hidden hover:shadow-lg transition-shadow group">
-              <div className="aspect-square bg-gray-100 relative">
+            <Link key={product.id} to={`/products/${product.slug}`} className="group card p-0 overflow-hidden">
+              <div className="aspect-square bg-slate-100 relative overflow-hidden">
                 {product.images?.[0] ? (
-                  <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder-product.svg'; }} />
+                  <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder-product.svg'; }} />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <Laptop className="h-20 w-20" />
+                  <div className="w-full h-full flex items-center justify-center text-slate-400">
+                    <Sparkles className="h-12 w-12" />
                   </div>
                 )}
                 {product.isFeatured && (
-                  <span className="absolute top-2 left-2 badge badge-success">Featured</span>
+                  <span className="absolute top-2 left-2 badge badge-success text-[10px] px-2 py-0.5">Featured</span>
                 )}
               </div>
               <div className="p-4">
-                <h3 className="font-semibold text-lg mb-1 group-hover:text-primary-600 truncate">{product.name}</h3>
-                <div className="flex items-center gap-2 mb-2">
-                  {product.brand?.logo ? (
-                    <img src={product.brand.logo} alt={product.brand.name} className="h-4 object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
-                  ) : null}
-                  <span className="text-gray-500 text-sm">{product.brand?.name}</span>
-                </div>
+                <p className="text-xs text-slate-400 mb-1">{product.brand?.name || ' '}</p>
+                <h3 className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-2 mb-2 leading-snug">{product.name}</h3>
                 <div className="flex items-center justify-between">
-                  <span className="text-xl font-bold text-primary-600">RM {product.price.toFixed(2)}</span>
-                  <div className="flex items-center text-yellow-500">
-                    <Star className="h-4 w-4 fill-current" />
-                    <span className="text-sm text-gray-500 ml-1">{product.averageRating?.toFixed(1) || '4.5'}</span>
+                  <span className="text-base font-bold text-slate-900">RM {product.price.toFixed(2)}</span>
+                  <div className="flex items-center gap-1 text-amber-400">
+                    <Star className="h-3.5 w-3.5 fill-current" />
+                    <span className="text-xs text-slate-400">{product.averageRating?.toFixed(1) || '4.5'}</span>
                   </div>
                 </div>
               </div>
@@ -147,28 +176,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="card p-6 text-center">
-          <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Laptop className="h-8 w-8 text-primary-600" />
+      {/* Trust */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+        <div className="card-static p-6 flex gap-4">
+          <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
+            <Shield className="h-6 w-6 text-emerald-600" />
           </div>
-          <h3 className="font-semibold text-lg mb-2">Quality Products</h3>
-          <p className="text-gray-600">All products are authentic and quality tested</p>
+          <div>
+            <h3 className="font-semibold text-slate-900 text-sm mb-1">Quality Products</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">All products are authentic and carefully quality-tested before listing.</p>
+          </div>
         </div>
-        <div className="card p-6 text-center">
-          <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Headphones className="h-8 w-8 text-primary-600" />
+        <div className="card-static p-6 flex gap-4">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+            <Headphones className="h-6 w-6 text-blue-600" />
           </div>
-          <h3 className="font-semibold text-lg mb-2">24/7 Support</h3>
-          <p className="text-gray-600">Our AI chatbot and team are here to help</p>
+          <div>
+            <h3 className="font-semibold text-slate-900 text-sm mb-1">24/7 Support</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">Our AI chatbot and support team are always ready to help you.</p>
+          </div>
         </div>
-        <div className="card p-6 text-center">
-          <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Smartphone className="h-8 w-8 text-primary-600" />
+        <div className="card-static p-6 flex gap-4">
+          <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0">
+            <Truck className="h-6 w-6 text-amber-600" />
           </div>
-          <h3 className="font-semibold text-lg mb-2">Fast Delivery</h3>
-          <p className="text-gray-600">Free pickup at branches or fast shipping</p>
+          <div>
+            <h3 className="font-semibold text-slate-900 text-sm mb-1">Fast Delivery</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">Free shipping on orders over RM100. Pickup at branches available.</p>
+          </div>
         </div>
       </section>
     </div>
